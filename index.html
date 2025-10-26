@@ -1,491 +1,255 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GSD Solutions - Interactive Business Plan</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Chosen Palette: Calm Neutrals (White, Gray-800, Indigo-600) -->
-    <!-- Application Structure Plan: Designed as an interactive, single-page business plan/service proposal. Uses vertical scrolling with a sticky nav for easy section jumping. The core interaction is a toggle-based "Services" section to compare the 3 packages, supported by a bar chart for visual cost comparison. An accordion for FAQs clarifies key policies. This structure directly maps to the user's goal of understanding the business model, making it more digestible than the raw conversation. -->
-    <!-- Visualization & Content Choices: Report Info (Pricing Tiers) -> Goal (Compare Costs) -> Viz (Interactive Bar Chart) -> Interaction (Toggle between Setup/Monthly fees) -> Justification (Clear visual comparison of package costs) -> Library (Chart.js/Canvas). Report Info (Team Roles) -> Goal (Explain structure) -> Viz (HTML/CSS Diagram) -> Justification (Simple, clear, no-SVG). Report Info (Policies) -> Goal (Clarify key questions) -> Viz (HTML/CSS Accordion) -> Interaction (Click to reveal) -> Justification (Hides complex info until needed). -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <title>Agency Pricing & Client Management Policy (v2)</title>
+    <!-- Load Tailwind CSS --><script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load Inter font --><link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
+        /* Apply the Inter font family */
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Inter', sans-serif;
         }
-        .chart-container {
-            position: relative;
-            width: 100%;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            height: 350px;
-            max-height: 400px;
-        }
-        @media (min-width: 768px) {
-            .chart-container {
-                height: 400px;
-            }
-        }
-        .nav-link.active {
-            font-weight: 600;
-            color: #4f46e5;
-            border-bottom: 2px solid #4f46e5;
-        }
-        .pkg-btn.active {
-            background-color: #4f46e5;
-            color: #ffffff;
-        }
-        .faq-question::after {
-            content: '\25BC';
-            float: right;
-            transition: transform 0.2s;
-        }
-        .faq-question.open::after {
-            transform: rotate(180deg);
+        .scroll-mt-24 { /* Adjust for fixed header height */
+            scroll-margin-top: 6rem; 
         }
     </style>
 </head>
-<body class="bg-white text-gray-800">
+<body class="bg-gray-50 text-gray-800 antialiased">
 
-    <header class="bg-white/90 backdrop-blur-md shadow-sm sticky top-0 z-50">
-        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex-shrink-0">
-                    <span class="text-2xl font-bold text-indigo-600">GSD Solutions</span>
-                </div>
-                <div class="hidden md:flex md:space-x-8">
-                    <a href="#philosophy" class="nav-link text-gray-600 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Philosophy</a>
-                    <a href="#team" class="nav-link text-gray-600 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Our Team</a>
-                    <a href="#services" class="nav-link text-gray-600 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Services</a>
-                    <a href="#process" class="nav-link text-gray-600 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">How It Works</a>
-                    <a href="#support" class="nav-link text-gray-600 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Support</a>
-                </div>
-                <div class="md:hidden">
-                    <button id="mobile-menu-btn" class="inline-flex items-center justify-center p-2 rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
-                        <span class="sr-only">Open main menu</span>
-                        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
-                        </svg>
-                    </button>
-                </div>
-            </div>
-            <div id="mobile-menu" class="md:hidden hidden pb-4">
-                <a href="#philosophy" class="nav-link block text-gray-600 hover:text-indigo-600 px-3 py-2 rounded-md text-base font-medium transition-colors">Philosophy</a>
-                <a href="#team" class="nav-link block text-gray-600 hover:text-indigo-600 px-3 py-2 rounded-md text-base font-medium transition-colors">Our Team</a>
-                <a href="#services" class="nav-link block text-gray-600 hover:text-indigo-600 px-3 py-2 rounded-md text-base font-medium transition-colors">Services</a>
-                <a href="#process" class="nav-link block text-gray-600 hover:text-indigo-600 px-3 py-2 rounded-md text-base font-medium transition-colors">How It Works</a>
-                <a href="#support" class="nav-link block text-gray-600 hover:text-indigo-600 px-3 py-2 rounded-md text-base font-medium transition-colors">Support</a>
-            </div>
-        </nav>
+    <!-- Fixed Header with Navigation --><header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto max-w-7xl px-4 py-4 flex items-center justify-between">
+            <a href="#" class="text-2xl font-extrabold text-indigo-700">Your Agency Name</a>
+            <nav class="hidden md:block">
+                <ul class="flex space-x-6">
+                    <li><a href="#philosophy" class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300">Philosophy</a></li>
+                    <li><a href="#packages" class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300">Packages</a></li>
+                    <li><a href="#management" class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300">Management</a></li>
+                    <li><a href="#support" class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300">Support</a></li>
+                    <li><a href="#upsell" class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300">Growth</a></li>
+                </ul>
+            </nav>
+            <button class="md:hidden p-2 rounded-md text-gray-700 hover:bg-gray-100">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+        </div>
     </header>
 
-    <main>
-        <section id="home" class="bg-gray-50">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32 text-center">
-                <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-gray-900 leading-tight">
-                    Your "Get Stuff Done" Tech Partner
-                </h1>
-                <p class="mt-6 text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto">
-                    We're a 2-person team offering bespoke website development and AI automation for small businesses. We handle the "how" so you can focus on your business.
-                </p>
-                <div class="mt-10">
-                    <a href="#services" class="inline-block bg-indigo-600 text-white font-semibold px-8 py-3 rounded-lg shadow-md hover:bg-indigo-700 transition-colors text-lg">
-                        Explore Our Services
-                    </a>
+    <!-- Hero Section --><section class="bg-indigo-700 text-white py-16 md:py-24 text-center">
+        <div class="container mx-auto max-w-3xl px-4">
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-4 leading-tight">Your Partner in Digital Growth & Efficiency</h1>
+            <p class="text-lg md:text-xl mb-8 opacity-90">
+                Unlock strategic solutions that solve expensive business problems, save time, and create operational efficiency. Our tiered model provides clear entry points and a value ladder that grows with your business.
+            </p>
+            <a href="#packages" class="inline-block bg-white text-indigo-700 font-bold px-8 py-3 rounded-full shadow-lg hover:bg-indigo-100 transition duration-300 transform hover:scale-105">View Our Packages</a>
+        </div>
+    </section>
+
+    <main class="container mx-auto max-w-7xl px-4 py-12 lg:py-16">
+        
+        <!-- Section 1: Core Pricing Philosophy --><section id="philosophy" class="bg-white rounded-xl shadow-lg p-6 sm:p-10 mb-12 scroll-mt-24">
+            <h2 class="text-3xl font-bold text-gray-900 mb-6 border-b-2 border-indigo-500 pb-3">Our Core Philosophy</h2>
+            <p class="text-lg text-gray-700 leading-relaxed">
+                Our pricing is fundamentally based on the <strong class="text-indigo-600">value and results we deliver</strong>, not simply the hours we spend. We understand that you're not just buying software or code; you're investing in strategic solutions designed to solve critical business challenges, reclaim valuable time, and forge operational efficiency. This approach ensures our tiered model offers clear, accessible entry points, alongside a robust value ladder engineered to scale seamlessly with your evolving business needs.
+            </p>
+        </section>
+
+        <!-- Section 2: Service Packages & Pricing --><section id="packages" class="mb-12 scroll-mt-24">
+            <h2 class="text-3xl font-bold text-gray-900 text-center mb-10">Our Service Packages</h2>
+            <p class="text-lg text-gray-700 text-center mb-10 max-w-2xl mx-auto">
+                We offer two distinct categories of services: <strong class="text-indigo-600">Integrated Packages</strong> for a combined web and automation solution, and <strong class="text-indigo-600">Standalone Automation Plans</strong> for specialized expertise.
+            </p>
+
+            <!-- Category 1: Integrated Packages --><h3 class="text-2xl font-semibold text-gray-900 mb-6 text-center">Integrated Website & Automation</h3>
+            <p class="text-md text-gray-700 mb-8 text-center max-w-xl mx-auto">
+                These packages are designed for clients seeking both a professional web presence and robust foundational automation.
+            </p>
+            
+            <div class="grid md:grid-cols-2 gap-8 mb-12">
+                <!-- Digital Foundation Package Card --><div class="bg-white rounded-xl shadow-md border border-indigo-100 p-8 flex flex-col hover:shadow-xl transition-shadow duration-300">
+                    <h4 class="text-xl font-bold text-indigo-700 mb-2">Digital Foundation Package</h4>
+                    <p class="text-sm text-gray-600 mb-4"><strong>Target Client:</strong> Startups and businesses needing a professional web presence.</p>
+                    
+                    <div class="mb-6 flex-grow">
+                        <p class="font-semibold text-gray-900 text-2xl mb-2">$3,500 <span class="text-base font-normal text-gray-600">Project Setup Fee</span></p>
+                        <p class="font-semibold text-gray-900 text-xl mb-4">$150<span class="text-base font-normal text-gray-600">/month Website Care Plan</span></p>
+                        <ul class="list-disc list-inside text-gray-700 space-y-2">
+                            <li>5-page WordPress website build</li>
+                            <li>Premium theme & mobile-responsive design</li>
+                            <li>Foundational on-page SEO & Google Analytics setup</li>
+                            <li>Premium Reseller Hosting (dedicated cPanel)</li>
+                            <li>Daily backups, weekly updates, security monitoring, SSL</li>
+                        </ul>
+                    </div>
+                    <a href="#" class="inline-block bg-indigo-600 text-white text-center py-3 px-6 rounded-lg font-semibold hover:bg-indigo-700 transition duration-300">Learn More</a>
+                </div>
+                
+                <!-- Business Efficiency Package Card --><div class="bg-white rounded-xl shadow-md border border-indigo-100 p-8 flex flex-col hover:shadow-xl transition-shadow duration-300">
+                    <h4 class="text-xl font-bold text-indigo-700 mb-2">Business Efficiency Package</h4>
+                    <p class="text-sm text-gray-600 mb-4"><strong>Target Client:</strong> SMBs with common operational pain points (e.g., lead management, scheduling).</p>
+                    
+                    <div class="mb-6 flex-grow">
+                        <p class="font-semibold text-gray-900 text-2xl mb-2">$6,500 <span class="text-base font-normal text-gray-600">Project Setup Fee</span></p>
+                        <p class="font-semibold text-gray-900 text-xl mb-4">$350<span class="text-base font-normal text-gray-600">/month Combined Care Plan</span></p>
+                        <ul class="list-disc list-inside text-gray-700 space-y-2">
+                            <li>Everything in Digital Foundation, PLUS:</li>
+                            <li>Design & implementation of up to three (3) foundational automation workflows (Zapier/Make)</li>
+                            <li>All Website Care Plan services</li>
+                            <li>Full suite of Automation Management Plan services</li>
+                        </ul>
+                    </div>
+                    <a href="#" class="inline-block bg-indigo-600 text-white text-center py-3 px-6 rounded-lg font-semibold hover:bg-indigo-700 transition duration-300">Learn More</a>
+                </div>
+            </div>
+
+            <!-- Category 2: Standalone Automation --><h3 class="text-2xl font-semibold text-gray-900 mb-6 text-center mt-12">Standalone Automation Management</h3>
+            <p class="text-md text-gray-700 mb-8 text-center max-w-xl mx-auto">
+                For clients with existing websites looking to leverage our dedicated automation expertise to streamline operations.
+            </p>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Automation Starter Plan Card --><div class="bg-white rounded-xl shadow-md border border-indigo-100 p-8 flex flex-col hover:shadow-xl transition-shadow duration-300">
+                    <h4 class="text-xl font-bold text-indigo-700 mb-2">Automation Starter Plan</h4>
+                    <p class="text-sm text-gray-600 mb-4"><strong>Target Client:</strong> Businesses with existing websites needing to solve common pain points.</p>
+                    
+                    <div class="mb-6 flex-grow">
+                        <p class="font-semibold text-gray-900 text-2xl mb-2">$3,000 <span class="text-base font-normal text-gray-600">Project Setup Fee</span></p>
+                        <p class="font-semibold text-gray-900 text-xl mb-4">$350<span class="text-base font-normal text-gray-600">/month Monthly Management</span></p>
+                        <ul class="list-disc list-inside text-gray-700 space-y-2">
+                            <li>Full audit of existing processes</li>
+                            <li>Strategy & design of up to three (3) foundational automation workflows</li>
+                            <li>Implementation using Zapier or Make (client owns subscription)</li>
+                            <li>Proactive Workflow Monitoring 24/7</li>
+                            <li>Error Triage & Management (per SLA)</li>
+                            <li>Ongoing Optimization & Dedicated Support</li>
+                        </ul>
+                    </div>
+                    <a href="#" class="inline-block bg-indigo-600 text-white text-center py-3 px-6 rounded-lg font-semibold hover:bg-indigo-700 transition duration-300">Get Started</a>
+                </div>
+                
+                <!-- Advanced Automation & Growth Plan Card --><div class="bg-white rounded-xl shadow-md border border-indigo-100 p-8 flex flex-col hover:shadow-xl transition-shadow duration-300">
+                    <h4 class="text-xl font-bold text-indigo-700 mb-2">Advanced Automation & Growth Plan (Tier 3)</h4>
+                    <p class="text-sm text-gray-600 mb-4"><strong>Target Client:</strong> Mature SMBs needing custom, multi-system integrations.</p>
+                    
+                    <div class="mb-6 flex-grow">
+                        <p class="font-semibold text-gray-900 text-2xl mb-2">Starts at $10,000+ <span class="text-base font-normal text-gray-600">Project Setup (Custom Quoted)</span></p>
+                        <p class="font-semibold text-gray-900 text-xl mb-4">Starts at $1,000+<span class="text-base font-normal text-gray-600">/month Monthly Management (Custom Quoted)</span></p>
+                        <ul class="list-disc list-inside text-gray-700 space-y-2">
+                            <li>Detailed discovery and scoping process</li>
+                            <li>Bespoke, multi-step AI agents and workflows (self-hosted n8n)</li>
+                            <li>All Automation Starter Plan services</li>
+                            <li>Dedicated server resources on our n8n instance</li>
+                            <li>Higher-priority support & proactive optimization</li>
+                        </ul>
+                    </div>
+                    <a href="#" class="inline-block bg-indigo-600 text-white text-center py-3 px-6 rounded-lg font-semibold hover:bg-indigo-700 transition duration-300">Request Custom Quote</a>
                 </div>
             </div>
         </section>
 
-        <section id="philosophy" class="container mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24">
-            <div class="max-w-3xl mx-auto text-center">
-                <h2 class="text-base font-semibold leading-7 text-indigo-600 uppercase">Our Philosophy</h2>
-                <p class="mt-2 text-3xl sm:text-4xl font-bold tracking-tight text-gray-900">
-                    We Sell Peace of Mind
-                </p>
-                <p class="mt-6 text-lg text-gray-600">
-                    Our value is not just in building; it's in managing the entire technical side of your business. We operate on a **Managed Service Model**. You don't get a cPanel login because you don't *want* one. You want a website that works, leads that flow, and processes that are automated. We provide a premium, managed solution.
-                </p>
-            </div>
+        <!-- Section 3: Software, Subscriptions & Account Management Policy --><section id="management" class="bg-indigo-50 rounded-xl shadow-lg p-6 sm:p-10 mb-12 scroll-mt-24">
+            <h2 class="text-3xl font-bold text-gray-900 mb-6 border-b-2 border-indigo-600 pb-3">Software, Subscriptions & Account Management</h2>
+            <ul class="list-disc list-outside pl-6 space-y-4 text-lg text-gray-700 leading-relaxed">
+                <li>
+                    <strong class="text-gray-900">Client-Owned Subscriptions:</strong> For all third-party cloud services, including Zapier and Make, the client is required to create and pay for their own accounts. We will guide them on which plan to purchase and they will provide us with secure, delegated access.
+                </li>
+                <li>
+                    <strong class="text-gray-900">Agency-Managed Infrastructure (Hosting & Tier 3):</strong> For website clients, we provide hosting through our professional Reseller Hosting account. Each client receives a dedicated, isolated cPanel account for security and control. For Tier 3 automation projects, the workflows run on our self-hosted n8n instance, and the cost is included in the monthly management fee.
+                </li>
+            </ul>
         </section>
 
-        <section id="team" class="bg-gray-50 py-20 sm:py-24">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="max-w-3xl mx-auto text-center mb-16">
-                    <h2 class="text-base font-semibold leading-7 text-indigo-600 uppercase">Our Team</h2>
-                    <p class="mt-2 text-3xl sm:text-4xl font-bold tracking-tight text-gray-900">
-                        A 2-Person Powerhouse
-                    </p>
-                    <p class="mt-6 text-lg text-gray-600">
-                        We combine development expertise with solutions-oriented sales to cover all your needs.
-                    </p>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 max-w-4xl mx-auto">
-                    <div class="bg-white p-8 rounded-lg shadow-lg text-center">
-                        <span class="text-5xl">💻</span>
-                        <h3 class="mt-4 text-2xl font-bold text-gray-900">The Developer</h3>
-                        <p class="mt-2 text-gray-600">The Architect & Builder</p>
-                        <ul class="mt-4 text-left space-y-2 text-gray-600">
-                            <li><span class="text-indigo-500 font-medium">✓</span> Builds custom WordPress websites</li>
-                            <li><span class="text-indigo-500 font-medium">✓</span> Manages all hosting & maintenance</li>
-                            <li><span class="text-indigo-500 font-medium">✓</span> Handles security & technical updates</li>
-                            <li><span class="text-indigo-500 font-medium">✓</span> Implements complex automations (n8n)</li>
-                        </ul>
-                    </div>
-                    <div class="bg-white p-8 rounded-lg shadow-lg text-center">
-                        <span class="text-5xl">📈</span>
-                        <h3 class="mt-4 text-2xl font-bold text-gray-900">The Solutions Engineer</h3>
-                        <p class="mt-2 text-gray-600">The Strategist & Guide</p>
-                        <ul class="mt-4 text-left space-y-2 text-gray-600">
-                            <li><span class="text-indigo-500 font-medium">✓</span> Your primary point of contact</li>
-                            <li><span class="text-indigo-500 font-medium">✓</span> Conducts sales & product demos</li>
-                            <li><span class="text-indigo-500 font-medium">✓</span> Designs your AI automation strategy</li>
-                            <li><span class="text-indigo-500 font-medium">✓</span> Focuses on Zapier & Make.com solutions</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="services" class="container mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24">
-            <div class="max-w-3xl mx-auto text-center mb-16">
-                <h2 class="text-base font-semibold leading-7 text-indigo-600 uppercase">Core Services</h2>
-                <p class="mt-2 text-3xl sm:text-4xl font-bold tracking-tight text-gray-900">
-                    Find Your Perfect Package
-                </p>
-                <p class="mt-6 text-lg text-gray-600">
-                    We offer three core packages designed to meet small businesses where they are. Select a package to see the details.
-                </p>
-            </div>
-
-            <div class="flex justify-center space-x-2 sm:space-x-4 mb-12">
-                <button class="pkg-btn active py-2 px-3 sm:px-6 rounded-lg font-semibold border border-gray-300 hover:bg-indigo-500 hover:text-white transition-all" data-pkg="launchpad">
-                    Launchpad
-                </button>
-                <button class="pkg-btn py-2 px-3 sm:px-6 rounded-lg font-semibold border border-gray-300 hover:bg-indigo-500 hover:text-white transition-all" data-pkg="accelerator">
-                    Accelerator
-                </button>
-                <button class="pkg-btn py-2 px-3 sm:px-6 rounded-lg font-semibold border border-gray-300 hover:bg-indigo-500 hover:text-white transition-all" data-pkg="transformation">
-                    Transformation
-                </button>
-            </div>
-
-            <div class="relative max-w-5xl mx-auto">
-                <div id="pkg-launchpad" class="pkg-content bg-white p-8 rounded-lg shadow-xl border border-gray-200">
-                    <h3 class="text-2xl font-bold text-indigo-700">Small Business Launchpad</h3>
-                    <p class="text-gray-600 mt-2">Ideal for businesses needing a new, professional web presence.</p>
-                    <div class="flex flex-col md:flex-row justify-between mt-6">
-                        <ul class="space-y-3 text-gray-700 mb-6 md:mb-0">
-                            <li><span class="text-green-500 font-bold">✓</span> 5-Page WordPress Site</li>
-                            <li><span class="text-green-500 font-bold">✓</span> Premium Managed Hosting</li>
-                            <li><span class="text-green-500 font-bold">✓</span> Weekly Updates, Security & Backups</li>
-                            <li><span class="text-gray-400 font-bold">✗</span> AI Automation (Available as Add-on)</li>
-                            <li><span class="text-green-500 font-bold">✓</span> Standard Support (24-48h response)</li>
-                        </ul>
-                        <div class="text-center md:text-right flex-shrink-0">
-                            <p class="text-gray-600">One-Time Setup</p>
-                            <p class="text-4xl font-bold text-gray-900">$1,999+</p>
-                            <p class="text-gray-600 mt-4">Monthly Retainer</p>
-                            <p class="text-4xl font-bold text-gray-900">$149</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="pkg-accelerator" class="pkg-content bg-white p-8 rounded-lg shadow-xl border border-gray-200 hidden">
-                    <h3 class="text-2xl font-bold text-indigo-700">AI Automation Accelerator</h3>
-                    <p class="text-gray-600 mt-2">For businesses with a good website but inefficient processes.</p>
-                    <div class="flex flex-col md:flex-row justify-between mt-6">
-                        <ul class="space-y-3 text-gray-700 mb-6 md:mb-0">
-                            <li><span class="text-gray-400 font-bold">✗</span> Website Build (Works with existing site)</li>
-                            <li><span class="text-gray-400 font-bold">✗</span> Hosting (Client Manages)</li>
-                            <li><span class="text-green-500 font-bold">✓</span> Up to 3 Core Automations (Build & Manage)</li>
-                            <li><span class="text-green-500 font-bold">✓</span> Proactive Automation Monitoring</li>
-                            <li><span class="text-green-500 font-bold">✓</span> Priority Support (8 biz hour response)</li>
-                        </ul>
-                        <div class="text-center md:text-right flex-shrink-0">
-                            <p class="text-gray-600">One-Time Setup</p>
-                            <p class="text-4xl font-bold text-gray-900">$999+</p>
-                            <p class="text-gray-600 mt-4">Monthly Retainer</p>
-                            <p class="text-4xl font-bold text-gray-900">$199</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="pkg-transformation" class="pkg-content bg-white p-8 rounded-lg shadow-xl border border-gray-200 hidden">
-                    <h3 class="text-2xl font-bold text-indigo-700">Total Business Transformation</h3>
-                    <p class="text-gray-600 mt-2">For businesses that want to be "all-in" on tech from day one.</p>
-                    <div class="flex flex-col md:flex-row justify-between mt-6">
-                        <ul class="space-y-3 text-gray-700 mb-6 md:mb-0">
-                            <li><span class="text-green-500 font-bold">✓</span> 5-Page WordPress Site</li>
-                            <li><span class="text-green-500 font-bold">✓</span> Premium Managed Hosting & Maintenance</li>
-                            <li><span class="text-green-500 font-bold">✓</span> Up to 5 Core Automations (Build & Manage)</li>
-                            <li><span class="text-green-500 font-bold">✓</span> Proactive Automation Monitoring</li>
-                            <li><span class="text-green-500 font-bold">✓</span> <span class="font-bold">VIP Support</span> (4 biz hour response)</li>
-                        </ul>
-                        <div class="text-center md:text-right flex-shrink-0">
-                            <p class="text-gray-600">One-Time Setup</p>
-                            <p class="text-4xl font-bold text-gray-900">$2,999+</p>
-                            <p class="text-gray-600 mt-4">Monthly Retainer</p>
-                            <p class="text-4xl font-bold text-gray-900">$299</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mt-20">
-                <h3 class="text-2xl font-bold text-gray-900 text-center mb-6">Cost Comparison</h3>
-                <div class="flex justify-center space-x-4 mb-8">
-                    <button id="chart-toggle-setup" class="pkg-btn active py-2 px-6 rounded-lg font-semibold border border-gray-300 hover:bg-indigo-500 hover:text-white transition-all">
-                        Setup Fees
-                    </button>
-                    <button id="chart-toggle-monthly" class="pkg-btn py-2 px-6 rounded-lg font-semibold border border-gray-300 hover:bg-indigo-500 hover:text-white transition-all">
-                        Monthly Retainers
-                    </button>
-                </div>
-                <div class="chart-container">
-                    <canvas id="packageChart"></canvas>
-                </div>
-            </div>
-        </section>
-
-        <section id="process" class="bg-gray-50 py-20 sm:py-24">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
-                <div class="text-center mb-16">
-                    <h2 class="text-base font-semibold leading-7 text-indigo-600 uppercase">How It Works</h2>
-                    <p class="mt-2 text-3xl sm:text-4xl font-bold tracking-tight text-gray-900">
-                        Key Policies & FAQs
-                    </p>
-                    <p class="mt-6 text-lg text-gray-600">
-                        Our Managed Service model is built on transparency. Here's what you need to know.
-                    </p>
-                </div>
-                <div class="space-y-6">
-                    <div class="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-                        <button class="faq-question w-full text-left p-6 font-semibold text-lg text-gray-800 focus:outline-none">
-                            Who pays for third-party tools like Zapier or Make.com?
-                        </button>
-                        <div class="faq-answer hidden p-6 pt-0 text-gray-600">
-                            <p><strong>You (the client) do.</strong> We are experts, not resellers. You will create and pay for your own Zapier, Make, OpenAI, etc., accounts. We are then added as developers to your account to build and manage your automations. This ensures full transparency—you pay for the car and the gas, and you pay us to be the expert driver and mechanic.</p>
-                        </div>
-                    </div>
-                    <div class="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-                        <button class="faq-question w-full text-left p-6 font-semibold text-lg text-gray-800 focus:outline-none">
-                            Do I get cPanel or Admin access to my website?
-                        </button>
-                        <div class="faq-answer hidden p-6 pt-0 text-gray-600">
-                            <p><strong>No.</strong> We sell a premium, managed solution, not simple hosting. Handing over cPanel or Admin access is how sites break. Instead, you get a WordPress "Editor" role, allowing you to add blog posts and update text. We handle all plugin installations, updates, security, and core settings. This is the non-negotiable value of our "peace of mind" promise.</p>
-                        </div>
-                    </div>
-                    <div class="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-                        <button class="faq-question w-full text-left p-6 font-semibold text-lg text-gray-800 focus:outline-none">
-                            What happens if I want to leave and host my site elsewhere?
-                        </button>
-                        <div class="faq-answer hidden p-6 pt-0 text-gray-600">
-                            <p><strong>Your website is your property.</strong> If you choose to terminate your monthly managed service plan, we will provide a full backup (WordPress files + database) of your site. A one-time "Site Migration & Handover" fee of $250 will apply, and you will be responsible for migrating, hosting, and maintaining it yourself from that point forward.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="support" class="container mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24">
-            <div class="text-center mb-16">
-                <h2 class="text-base font-semibold leading-7 text-indigo-600 uppercase">Support Tiers</h2>
-                <p class="mt-2 text-3xl sm:text-4xl font-bold tracking-tight text-gray-900">
-                    We're Here When You Need Us
-                </p>
-                <p class="mt-6 text-lg text-gray-600">
-                    Our support scales with your package, ensuring you get the right level of attention.
-                </p>
-            </div>
-            <div class="overflow-x-auto max-w-4xl mx-auto">
-                <table class="w-full min-w-max bg-white shadow-xl rounded-lg overflow-hidden border border-gray-200">
-                    <thead class="bg-gray-100">
+        <!-- Section 4: Support, Maintenance & Warranty Policy --><section id="support" class="mb-12 scroll-mt-24">
+            <h2 class="text-3xl font-bold text-gray-900 mb-6 border-b-2 border-indigo-500 pb-3">Support, Maintenance & Warranty</h2>
+            <ul class="list-disc list-outside pl-6 space-y-4 text-lg text-gray-700 mb-8 leading-relaxed">
+                <li>
+                    <strong class="text-gray-900">Initial Warranty Period:</strong> All new builds include a 90-day warranty for fixing any bugs or errors related to the original scope of work at no charge.
+                </li>
+                <li>
+                    <strong class="text-gray-900">Service Level Agreement (SLA) for Monthly Plans:</strong> Our commitment to responsiveness is a premium feature of our service.
+                </li>
+            </ul>
+            
+            <!-- SLA Table --><div class="overflow-x-auto rounded-xl border border-gray-200 shadow-lg bg-white">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
                         <tr>
-                            <th class="p-4 text-left font-semibold text-gray-700">Package</th>
-                            <th class="p-4 text-left font-semibold text-gray-700">Response Time</th>
-                            <th class="p-4 text-left font-semibold text-gray-700">Best For</th>
+                            <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Severity Level</th>
+                            <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Description</th>
+                            <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Target First Response Time</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-200">
-                        <tr class="hover:bg-gray-50">
-                            <td class="p-4 font-medium text-gray-800">Small Business Launchpad</td>
-                            <td class="p-4 text-gray-600">Standard (24-48 business hours)</td>
-                            <td class="p-4 text-gray-600">General website support</td>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-red-600">1 - Critical</td>
+                            <td class="px-6 py-4 text-sm text-gray-700">Entire website is down; Core business automation is failing.</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">2 Business Hours</td>
                         </tr>
-                        <tr class="hover:bg-gray-50">
-                            <td class="p-4 font-medium text-gray-800">AI Automation Accelerator</td>
-                            <td class="p-4 text-gray-600">Priority (8 business hours)</td>
-                            <td class="p-4 text-gray-600">Automation-critical businesses</td>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-yellow-600">2 - High</td>
+                            <td class="px-6 py-4 text-sm text-gray-700">A key feature is broken; A major workflow is producing errors.</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">8 Business Hours</td>
                         </tr>
-                        <tr class="hover:bg-gray-50">
-                            <td class="p-4 font-medium text-indigo-600">Total Business Transformation</td>
-                            <td class="p-4 text-indigo-600 font-semibold">VIP (4 business hours)</td>
-                            <td class="p-4 text-gray-600">All-in, tech-reliant operations</td>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">3 - Medium</td>
+                            <td class="px-6 py-4 text-sm text-gray-700">Minor feature malfunction; content display issue.</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">1 Business Day</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
+            <p class="text-sm text-gray-600 mt-6 italic text-center max-w-2xl mx-auto">
+                A "response" is an acknowledgment of the issue and the start of an investigation. Full "resolution" time is dependent on the underlying service provider (e.Example: Zapier, Make, hosting provider). We will manage the issue and leverage our provider support channels to expedite resolution on your behalf.
+            </p>
         </section>
+
+        <!-- Section 5: Strategic Client Management & Upsell Scenarios --><section id="upsell" class="bg-gray-100 rounded-xl shadow-lg p-6 sm:p-10 mb-12 scroll-mt-24">
+            <h2 class="text-3xl font-bold text-gray-900 mb-6 border-b-2 border-indigo-500 pb-3">Strategic Client Management & Growth</h2>
+            <p class="text-lg text-gray-700 mb-8 leading-relaxed">
+                Our goal is to be a long-term strategic partner, consistently identifying opportunities for optimization and growth within your business.
+            </p>
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Scenario 1 --><div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+                    <h4 class="text-xl font-semibold text-gray-900 mb-4">Scenario 1: Platform Optimization Project</h4>
+                    <ul class="list-disc list-outside pl-6 space-y-3 text-base text-gray-700">
+                        <li><strong>Trigger:</strong> A client's Zapier bill increases significantly due to high volume.</li>
+                        <li><strong>Our Action:</strong> We proactively propose a fixed-price project to migrate workflows to the more cost-effective Make platform, backed by a clear ROI analysis.</li>
+                        <li><strong>Outcome:</strong> Client saves money on software, and our agency provides high-value strategic service, strengthening our partnership.</li>
+                    </ul>
+                </div>
+                <!-- Scenario 2 --><div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+                    <h4 class="text-xl font-semibold text-gray-900 mb-4">Scenario 2: Advanced Solution Upgrade</h4>
+                    <ul class="list-disc list-outside pl-6 space-y-3 text-base text-gray-700">
+                        <li><strong>Trigger:</strong> Client expresses a new, complex operational challenge unaddressable by current setup.</li>
+                        <li><strong>Our Action:</strong> We schedule a discovery to scope a custom solution using our self-hosted n8n platform.</li>
+                        <li><strong>Outcome:</strong> Client gains a Tier 3 project, enhancing efficiency and increasing our recurring revenue.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Works Cited --><section class="mt-12 bg-gray-50 p-6 rounded-xl border border-gray-200">
+            <h3 class="text-xl font-bold text-gray-900 mb-4">Works Cited</h3>
+            <ul class="list-decimal list-outside pl-6 space-y-2 text-sm text-gray-600">
+                <li>cPanel Reseller Hosting | InMotion Hosting, accessed on October 23, 2025, <a href="https://www.inmotionhosting.com/cpanel-hosting/reseller-hosting-with-cpanel" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline">https://www.inmotionhosting.com/cpanel-hosting/reseller-hosting-with-cpanel</a></li>
+                <li>Unlimited cPanel Reseller Hosting - Stablepoint, accessed on October 23, 2025, <a href="https://stablepoint.com/us/reseller-hosting" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline">https://stablepoint.com/us/reseller-hosting</a></li>
+                <li>Small Business Website Package - Pongos Interactive, accessed on October 23, 2025, <a href="https://pongos.com/smallbiz/" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline">https://pongos.com/smallbiz/</a></li>
+                <li>Web Design Packages & Pricing | Foxxr Digital Marketing, accessed on October 23, 2025, <a href="https://foxxr.com/packages/website-design/" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline">https://foxxr.com/packages/website-design/</a></li>
+            </ul>
+        </section>
+
     </main>
 
-    <footer class="bg-gray-900 text-gray-400">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
-            <p class="text-2xl font-bold text-white">GSD Solutions</p>
-            <p class="mt-2">Stop worrying about tech. Start running your business.</p>
-            <p class="mt-4 text-sm">&copy; 2025 GSD Solutions. All rights reserved.</p>
+    <footer class="bg-gray-800 text-white py-8 mt-12">
+        <div class="container mx-auto max-w-7xl px-4 text-center">
+            <p>&copy; 2024 Your Agency Name. All rights reserved.</p>
         </div>
     </footer>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const packageData = {
-                labels: ['Launchpad', 'Accelerator', 'Transformation'],
-                setupFees: [1999, 999, 2999],
-                monthlyFees: [149, 199, 299]
-            };
-            
-            let packageChart;
-            const ctx = document.getElementById('packageChart').getContext('2d');
-            const setupBtn = document.getElementById('chart-toggle-setup');
-            const monthlyBtn = document.getElementById('chart-toggle-monthly');
-            const chartToggleBtns = [setupBtn, monthlyBtn];
-
-            function createOrUpdateChart(dataType) {
-                const data = (dataType === 'setup') ? packageData.setupFees : packageData.monthlyFees;
-                const label = (dataType === 'setup') ? 'One-Time Setup Fee ($)' : 'Monthly Retainer ($)';
-
-                if (packageChart) {
-                    packageChart.destroy();
-                }
-
-                packageChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: packageData.labels,
-                        datasets: [{
-                            label: label,
-                            data: data,
-                            backgroundColor: [
-                                'rgba(129, 140, 248, 0.6)',
-                                'rgba(99, 102, 241, 0.6)',
-                                'rgba(79, 70, 229, 0.6)'
-                            ],
-                            borderColor: [
-                                'rgba(129, 140, 248, 1)',
-                                'rgba(99, 102, 241, 1)',
-                                'rgba(79, 70, 229, 1)'
-                            ],
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: false
-                            },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        let label = context.dataset.label || '';
-                                        if (label) {
-                                            label += ': ';
-                                        }
-                                        if (context.parsed.y !== null) {
-                                            label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(context.parsed.y);
-                                        }
-                                        return label;
-                                    }
-                                }
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    callback: function(value, index, values) {
-                                        return '$' + value;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-
-            function toggleChart(type) {
-                createOrUpdateChart(type);
-                if (type === 'setup') {
-                    setupBtn.classList.add('active');
-                    monthlyBtn.classList.remove('active');
-                } else {
-                    setupBtn.classList.remove('active');
-                    monthlyBtn.classList.add('active');
-                }
-            }
-
-            setupBtn.addEventListener('click', () => toggleChart('setup'));
-            monthlyBtn.addEventListener('click', () => toggleChart('monthly'));
-            createOrUpdateChart('setup');
-
-            const pkgBtns = document.querySelectorAll('.pkg-btn');
-            const pkgContents = document.querySelectorAll('.pkg-content');
-            pkgBtns.forEach(btn => {
-                if (btn.dataset.pkg) {
-                    btn.addEventListener('click', () => {
-                        const targetPkg = btn.dataset.pkg;
-                        
-                        pkgBtns.forEach(b => b.classList.remove('active'));
-                        btn.classList.add('active');
-                        
-                        pkgContents.forEach(content => {
-                            if (content.id === `pkg-${targetPkg}`) {
-                                content.classList.remove('hidden');
-                            } else {
-                                content.classList.add('hidden');
-                            }
-                        });
-                    });
-                }
-            });
-
-            const faqQuestions = document.querySelectorAll('.faq-question');
-            faqQuestions.forEach(question => {
-                question.addEventListener('click', () => {
-                    const answer = question.nextElementSibling;
-                    question.classList.toggle('open');
-                    answer.classList.toggle('hidden');
-                });
-            });
-
-            const navLinks = document.querySelectorAll('nav a[href^="#"]');
-            navLinks.forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const targetId = this.getAttribute('href');
-                    const targetElement = document.querySelector(targetId);
-                    if (targetElement) {
-                        targetElement.scrollIntoView({
-                            behavior: 'smooth'
-                        });
-                        
-                        navLinks.forEach(l => l.classList.remove('active'));
-                        this.classList.add('active');
-                        
-                        if (window.innerWidth < 768) {
-                            document.getElementById('mobile-menu').classList.add('hidden');
-                        }
-                    }
-                });
-            });
-            
-            document.getElementById('mobile-menu-btn').addEventListener('click', () => {
-                 document.getElementById('mobile-menu').classList.toggle('hidden');
-            });
-        });
-    </script>
 </body>
 </html>
